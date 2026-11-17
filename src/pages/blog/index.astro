@@ -1,0 +1,15 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { drafts } from "../../data/site";
+---
+<SiteLayout active="blog" title="Writing — Saad" description="Technical writing in progress on payment retries and recoverable email imports.">
+  <header class="container page-intro"><p class="eyebrow">Writing desk</p><h1>Notes from the systems I work on.</h1><p>Short practical pieces on product engineering, reliability, and the edges that make software work in the real world.</p></header>
+  <section class="container section" aria-label="Articles">
+    <div class="blog-list">
+      {drafts.map((draft) => <article class="blog-card" data-reveal>
+        <div><span class="draft-label">Unpublished draft</span><p class="blog-meta">{draft.readTime}</p></div>
+        <div><h2><a href={'/blog/' + draft.slug + '/'}>{draft.title}</a></h2><p>{draft.summary}</p><p class="blog-meta">For review · Not a published article</p></div>
+      </article>)}
+    </div>
+  </section>
+</SiteLayout>

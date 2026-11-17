@@ -1,0 +1,20 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { journey, site } from "../data/site";
+---
+<SiteLayout active="journey" title="Journey — Saad" description="The path from Botany to full stack product engineering, with teams in Bangladesh, the US, and Australia.">
+  <header class="container page-intro"><p class="eyebrow">Journey</p><h1>I learned to study a system before touching it.</h1><p>From studying living systems to shipping software with distributed teams, each step added a new way to understand the whole product.</p></header>
+  <section class="container section" aria-label="Career and education timeline">
+    <div class="timeline">
+      {journey.map((item) => <article class:list={["timeline-item", { current: item.current }]} data-reveal>
+        <p class="timeline-period">{item.period}</p>
+        <div class="timeline-content"><h2>{item.title}</h2><p class="place">{item.place}{item.current && <span class="availability"> · Current</span>}</p><p>{item.body}</p><div class="tag-list" aria-label="Skills and technologies">{item.tags.map((tag) => <span class="tag">{tag}</span>)}</div></div>
+      </article>)}
+    </div>
+    <div class="contact-grid" style="margin-top:72px">
+      <article class="contact-block"><h2>Beyond the job titles</h2><p>Alongside work, I’ve mentored web development students and supported learners as a mentor at Shikhbe Shobai. I also won Techmania 1.0 in Web Design.</p></article>
+      <article class="contact-block"><h2>What I bring to a team</h2><p>Careful system thinking, end-to-end product ownership, and a willingness to work across the interface, API, data layer, and deployment.</p><a class="text-link" href="/work/">Explore selected work <span aria-hidden="true">→</span></a></article>
+    </div>
+  </section>
+  <section class="container callout" data-reveal><h2>Good work starts with understanding the problem.</h2><a class="button" href="mailto:saadsrabon2@gmail.com?subject=Let%27s%20talk%20about%20a%20role">Talk about a role <span aria-hidden="true">↗</span></a></section>
+</SiteLayout>

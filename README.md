@@ -1,47 +1,33 @@
-# Saad · Personal Brand Site (MVP)
+# Saad · Portfolio
 
-Premium scroll-driven personal brand site. Placeholders are active until you add real content.
+An editorial portfolio for Md Abul Hasnat Saad, a full stack engineer in Dhaka. Built with Astro as a static site for `saadsrabon.com`.
 
-## Run locally
+## Develop and build
 
-```bash
+```sh
 pnpm install
 pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-## Update placeholders
-
-Edit **`src/lib/placeholders.ts`** for:
-
-- Profile (name, email, location)
-- Image URLs
-- Trust metrics
-- Community links
-- Resume availability
-
-Edit **`src/lib/copy.ts`** for section headlines and case study narratives.
-
-## MVP features
-
-- Entry gate with guided / skip paths
-- GSAP scroll chapters (pinned process, horizontal cases)
-- Dark / light theme (`D` key or nav icon)
-- Terminal easter egg (`Cmd+K`, type `resume`)
-- Keyboard shortcuts (`?`)
-- Scroll progress indicator
-
-## Strategy
-
-See **`STRATEGY.md`** for full IA, copy system, and phase roadmap.
-
-## Deploy
-
-```bash
+pnpm check
 pnpm build
-pnpm start
+pnpm preview
 ```
 
-Deploy to Vercel or any Node host.
-# portfoliov3
+The production build is written to `dist/`. Astro’s sitemap integration creates `sitemap-index.xml`; `public/robots.txt` points crawlers to it.
+
+## Routes
+
+- `/` — profile and selected projects
+- `/journey/` — career and education timeline
+- `/work/` — project summaries
+- `/contact/` and `/book/` — direct contact and call coordination by email
+- `/blog/` — writing index
+- `/blog/payments-that-can-be-retried/` and `/blog/email-imports-that-recover/` — editorial drafts
+- `/media/` — video, podcast, and appearance archive
+
+The article pages are unpublished drafts. They carry `noindex` and are excluded from the sitemap. Media cards are empty states until real recordings or appearances are available. Call requests open an email draft; no calendar or booking service is connected.
+
+## Update portfolio content
+
+Edit `src/data/site.ts` for profile details, verified project summaries, the timeline, and the clearly labeled article drafts. Shared page metadata and navigation live in `src/layouts/SiteLayout.astro`; design tokens and responsive styles are in `src/styles/global.css`.
+
+Project descriptions are based on the supplied portfolio design source. The site uses no invented client marks, testimonials, or published media. Social preview artwork is `public/social-card.png`.

@@ -1,0 +1,20 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { drafts } from "../../data/site";
+export function getStaticPaths() {
+  return drafts.map((draft) => ({ params: { slug: draft.slug }, props: { draft } }));
+}
+const { draft } = Astro.props;
+---
+<SiteLayout active="blog" title={draft.title + " — Draft — Saad"} description={draft.summary} ogType="article" noindex={true}>
+  <article class="narrow article">
+    <a class="text-link" href="/blog/">← Back to writing</a>
+    <p class="eyebrow" style="margin-top:34px">Technical note · <span class="draft-label">Unpublished draft</span></p>
+    <h1>{draft.title}</h1>
+    <p class="article-summary">{draft.summary}</p>
+    <p class="blog-meta">{draft.readTime} · Unpublished · Needs editorial review</p>
+    <div class="article-body">{draft.paragraphs.slice(0, -1).map((paragraph) => <p>{paragraph}</p>)}</div>
+    <aside class="article-note">{draft.paragraphs[draft.paragraphs.length - 1]}</aside>
+    <div style="margin-top:38px"><a class="text-link" href="/blog/">Return to the writing desk <span aria-hidden="true">→</span></a></div>
+  </article>
+</SiteLayout>

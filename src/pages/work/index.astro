@@ -1,0 +1,16 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { projects } from "../../data/site";
+---
+<SiteLayout active="work" title="Selected work — Saad" description="A selection of production products and systems across fintech, eSIM, CRM, hiring, and real-time applications.">
+  <header class="container page-intro"><p class="eyebrow">Selected work</p><h1>Products in production, not demos.</h1><p>A selection of systems I’ve helped build across payments, travel eSIM, email, hiring, and real-time collaboration. Summaries are based on project notes; no client logos or unavailable screenshots are implied.</p></header>
+  <section class="container section" aria-label="Project summaries">
+    <div class="project-list">
+      {projects.map((project) => <article class="project" data-reveal>
+        <span class="project-group">{project.group}</span>
+        <div class="project-copy"><h2>{project.name}</h2><p>{project.description}</p><div class="tag-list" aria-label="Technologies">{project.tags.map((tag) => <span class="tag">{tag}</span>)}</div></div>
+      </article>)}
+    </div>
+  </section>
+  <section class="container callout" data-reveal><h2>Working through a similar product challenge?</h2><a class="button" href="/contact/">Get in touch <span aria-hidden="true">↗</span></a></section>
+</SiteLayout>

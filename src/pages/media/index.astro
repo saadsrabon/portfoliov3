@@ -1,0 +1,18 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { site } from "../../data/site";
+---
+<SiteLayout active="media" title="Media — Saad" description="Video walkthroughs and podcast conversations with full stack engineer Md Abul Hasnat Saad.">
+  <header class="container page-intro"><p class="eyebrow">Media</p><h1>Conversations and product walkthroughs.</h1><p>A home for recorded conversations and visual explanations of the systems behind the work.</p></header>
+  <section class="container section">
+    <div class="media-grid">
+      <article class="media-slot" data-reveal><span class="media-kind">Video</span><div><h2>Product walkthroughs</h2><p>No published walkthroughs yet.</p></div></article>
+      <article class="media-slot" data-reveal><span class="media-kind">Podcast</span><div><h2>Podcast conversations</h2><p>No published episodes yet.</p></div></article>
+      <article class="media-slot" data-reveal><span class="media-kind">Press &amp; talks</span><div><h2>Talks and interviews</h2><p>No published appearances yet.</p></div></article>
+    </div>
+    <div class="contact-grid" style="margin-top:52px">
+      <article class="contact-block"><h2>Planning a conversation?</h2><p>I’m happy to talk about product engineering, payment reliability, real-time apps, and building across the stack.</p><a class="text-link" href="mailto:saadsrabon2@gmail.com?subject=Podcast%20or%20talk%20invitation">Send an invitation <span aria-hidden="true">↗</span></a></article>
+      <article class="contact-block"><h2>Technical notes</h2><p>While longer articles are being prepared, the writing desk has a couple of clearly labeled unpublished drafts.</p><a class="text-link" href="/blog/">View the drafts <span aria-hidden="true">→</span></a></article>
+    </div>
+  </section>
+</SiteLayout>

@@ -1,0 +1,110 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string;
+  canonical?: string;
+  schema?: Record<string, unknown>;
+  ogType?: "website" | "article";
+  noindex?: boolean;
+}
+
+const {
+  title = "Saad — Full stack engineer",
+  description = "Full stack engineer in Dhaka, Bangladesh. Building fintech, eSIM, CRM, and real-time products with teams across the US and Australia.",
+  active = "",
+  canonical,
+  schema,
+  ogType = "website",
+  noindex = false,
+} = Astro.props;
+const currentUrl = Astro.url.pathname === "/" ? "" : Astro.url.pathname.replace(/\/$/, "");
+const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <meta name="theme-color" content="#faf9f5" />
+    <meta name="robots" content={noindex ? "noindex,follow" : "index,follow,max-image-preview:large"} />
+    <meta name="googlebot" content={noindex ? "noindex,follow" : "index,follow,max-image-preview:large"} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Saad" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content="https://saadsrabon.com/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://saadsrabon.com/social-card.png" />
+    <title>{title}</title>
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, "\\u003c")} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="wordmark" href="/" aria-label="Saad, home">Saad<span class="wordmark-period">.</span></a>
+        <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="/" class:list={{ active: active === "profile" }} aria-current={active === "profile" ? "page" : undefined}>Profile</a>
+          <a href="/journey/" class:list={{ active: active === "journey" }} aria-current={active === "journey" ? "page" : undefined}>Journey</a>
+          <a href="/work/" class:list={{ active: active === "work" }} aria-current={active === "work" ? "page" : undefined}>Work</a>
+          <a href="/blog/" class:list={{ active: active === "blog" }} aria-current={active === "blog" ? "page" : undefined}>Writing</a>
+          <a href="/media/" class:list={{ active: active === "media" }} aria-current={active === "media" ? "page" : undefined}>Media</a>
+          <a href="/contact/" class:list={{ active: active === "contact" }} aria-current={active === "contact" ? "page" : undefined}>Contact</a>
+        </nav>
+        <a class="button button-small header-cta" href="/book/">Book a call <span aria-hidden="true">↗</span></a>
+        <details class="mobile-nav">
+          <summary aria-label="Open navigation"><span class="menu-icon" aria-hidden="true"></span><span class="sr-only">Menu</span></summary>
+          <nav aria-label="Mobile navigation">
+            <a href="/" class:list={{ active: active === "profile" }} aria-current={active === "profile" ? "page" : undefined}>Profile</a>
+            <a href="/journey/" class:list={{ active: active === "journey" }} aria-current={active === "journey" ? "page" : undefined}>Journey</a>
+            <a href="/work/" class:list={{ active: active === "work" }} aria-current={active === "work" ? "page" : undefined}>Work</a>
+            <a href="/blog/" class:list={{ active: active === "blog" }} aria-current={active === "blog" ? "page" : undefined}>Writing</a>
+            <a href="/media/" class:list={{ active: active === "media" }} aria-current={active === "media" ? "page" : undefined}>Media</a>
+            <a href="/contact/" class:list={{ active: active === "contact" }} aria-current={active === "contact" ? "page" : undefined}>Contact</a>
+            <a href="/book/">Book a call ↗</a>
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>Md Abul Hasnat Saad <span class="footer-muted">· Dhaka, Bangladesh</span></span>
+        <nav aria-label="Social links">
+          <a href="https://github.com/saadsrabon" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+          <a href="https://www.linkedin.com/in/abul-hasnat-saad/" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+          <a href="mailto:saadsrabon2@gmail.com">Email <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </footer>
+    <script>
+      import { gsap } from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+      gsap.registerPlugin(ScrollTrigger);
+      const motion = gsap.matchMedia();
+      motion.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
+          gsap.fromTo(element, { autoAlpha: 0, y: 10 }, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.55,
+            ease: "power2.out",
+            scrollTrigger: { trigger: element, start: "top 90%", once: true },
+          });
+        });
+        return () => ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      });
+    </script>
+  </body>
+</html>
