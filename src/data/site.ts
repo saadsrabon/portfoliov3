@@ -64,15 +64,15 @@ export const concepts = [
 ];
 
 export const projects = [
-  { slug: "simfree", name: "SimFree", group: "Travel eSIM", description: "Backend for a global travel eSIM platform covering 200+ countries and 800+ networks. Redis cache windows with tag invalidation and an eight-day idempotency window for Stripe and BTCPay webhooks.", tags: ["NestJS", "Redis", "Stripe", "BTCPay"] },
+  { slug: "simfree", name: "SimFree", url: "https://simfree.io/en", group: "Travel eSIM", description: "Backend for a global travel eSIM platform covering 200+ countries and 800+ networks. Redis cache windows with tag invalidation and an eight-day idempotency window for Stripe and BTCPay webhooks.", tags: ["NestJS", "Redis", "Stripe", "BTCPay"] },
   { slug: "leadpylot-email-service", name: "LeadPylot email service", group: "CRM · email", description: "IMAP mailbox sync, Gmail OAuth, SMTP delivery, approvals, and inbound-email lead creation. Includes duplicate-import protection and quarantine and replay for failed imports.", tags: ["IMAP", "OAuth", "Redis"] },
   { slug: "visaroles", name: "VisaRoles", group: "Jobs · data", description: "A job platform for 76,000 users. Six NHS job boards feed into a 39-field PostgreSQL record, with Stripe HMAC verification and shared Zod schemas.", tags: ["PostgreSQL", "Zod", "Vitest"] },
   { slug: "prepcirca", name: "PrepCirca", group: "Learning · real time", description: "WebRTC calling for sessions of 50+ concurrent participants, including camera and microphone recovery.", tags: ["WebRTC", "Node.js"] },
   { slug: "hrm-and-client-portals", name: "HRM and client portals", group: "Internal products", description: "Two products built end to end at Dashur AI, supported by API and database optimization and multi-region AWS hosting.", tags: ["Node.js", "AWS"] },
   { slug: "investbank", name: "InvestBank", group: "Fintech", description: "React, Vite, and Expo applications on Express and PostgreSQL, with JWT, roles, and Zod validation for money movement and IBANs.", tags: ["Expo", "JWT", "Zod"] },
-  { slug: "job-engineer", name: "Job Engineer", group: "Hiring tools", description: "A Next.js and NestJS monorepo with a dashboard, API, BullMQ worker, Chrome extension, resume scoring, and email workflows.", tags: ["Clerk", "Prisma", "BullMQ"] },
+  { slug: "job-engineer", name: "Job Engineer", url: "https://job-engineer-landing-7mxt.vercel.app/", group: "Hiring tools", description: "A Next.js and NestJS monorepo with a dashboard, API, BullMQ worker, Chrome extension, resume scoring, and email workflows.", tags: ["Clerk", "Prisma", "BullMQ"] },
   { slug: "chilahati-archive", name: "Chilahati Archive", group: "Community · publishing", description: "A Next.js and Firestore archive with Bengali rich text, 14 categories, search, and moderated submissions.", tags: ["Firebase", "Next.js"] },
-  { slug: "shomajgori-foundation", name: "Shomajgori Foundation", group: "Nonprofit · commerce", description: "WordPress theme and page-builder customization, WooCommerce storefront interfaces, and production fixes.", tags: ["WordPress", "WooCommerce"] },
+  { slug: "shomajgori-foundation", name: "Shomajgori Foundation", url: "https://shomajgori.org/", group: "Nonprofit · commerce", description: "WordPress theme and page-builder customization, WooCommerce storefront interfaces, and production fixes.", tags: ["WordPress", "WooCommerce"] },
 ];
 
 export const conceptProjects = concepts.map((project) => ({

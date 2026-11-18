@@ -34,5 +34,10 @@
     "drizzle-kit": "^0.31.11",
     "tsx": "^4.23.15",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "sanitize-html>htmlparser2": "10.1.0"
+    }
   }
 }
