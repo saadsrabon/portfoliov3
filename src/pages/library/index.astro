@@ -1,0 +1,28 @@
+---
+import { asc, eq } from "drizzle-orm";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { resources } from "../../db/schema";
+import { getDatabase } from "../../lib/database";
+
+const categories = [
+  { id: "learning", title: "Learning", description: "Courses, explainers, and guides" },
+  { id: "tools", title: "Tools", description: "Useful software and services" },
+  { id: "reading", title: "Reading", description: "Books and articles worth returning to" },
+  { id: "media", title: "Media", description: "Talks, podcasts, and videos" },
+] as const;
+const db = await getDatabase();
+const entries = await db.select().from(resources).where(eq(resources.status, "published")).orderBy(asc(resources.title));
+const byCategory = Object.fromEntries(categories.map((category) => [category.id, entries.filter((entry) => entry.category === category.id)]));
+---
+<SiteLayout active="library" title="Library - Saad" description="A small, edited shelf of learning resources, tools, reading, and media.">
+  <header class="container page-intro"><p class="eyebrow">Library</p><h1>A shelf of things I return to.</h1><p>Books, tools, guides, and media that have earned a place in my working notes. Each item is linked to its source and described plainly.</p></header>
+  <section class="container section" aria-label="Library categories">
+    <div class="library-category-grid">{categories.map((category) => <a class="library-category" href={`#${category.id}`}><span class="library-count">{byCategory[category.id].length.toString().padStart(2, "0")}</span><span><strong>{category.title}</strong><small>{category.description}</small></span><span aria-hidden="true">↗</span></a>)}</div>
+    {categories.map((category) => <section class="library-section" id={category.id} aria-labelledby={`${category.id}-title`}><div class="section-head"><div><p class="eyebrow">{category.title}</p><h2 id={`${category.id}-title`}>{category.description}</h2></div><span class="library-count">{byCategory[category.id].length} {byCategory[category.id].length === 1 ? "item" : "items"}</span></div>
+      {byCategory[category.id].length ? <div class="resource-grid" data-motion-stagger>{byCategory[category.id].map((entry) => <article class="resource-card" data-motion-card>{entry.coverImage && <img src={entry.coverImage} alt={entry.coverImageAlt ?? ""} loading="lazy" />}<div><p class="blog-meta">{entry.author ? `By ${entry.author}` : "External resource"}</p><h3><a href={entry.url} target="_blank" rel="noopener noreferrer">{entry.title}<span class="sr-only"> (opens in a new tab)</span></a></h3><p>{entry.description}</p><a class="text-link" href={entry.url} target="_blank" rel="noopener noreferrer">Open source ↗</a></div></article>)}</div> : <p class="library-empty">No items in this shelf yet. Resources will be added after editorial review.</p>}
+    </section>)}
+    <section class="library-section" aria-labelledby="library-projects"><div class="section-head"><div><p class="eyebrow">Projects</p><h2 id="library-projects">Selected product work and independent concepts.</h2></div><a class="text-link" href="/work/">Browse all work ↗</a></div><p class="library-empty">The project pages include available screenshots, verified notes, and clear concept disclosures.</p></section>
+    <section class="library-section" aria-labelledby="library-writing"><div class="section-head"><div><p class="eyebrow">Writing</p><h2 id="library-writing">Published technical notes.</h2></div><a class="text-link" href="/blog/">Visit the writing desk ↗</a></div><p class="library-empty">Only reviewed, published articles appear in the writing archive.</p></section>
+    <section class="library-section" aria-labelledby="library-media"><div class="section-head"><div><p class="eyebrow">Media</p><h2 id="library-media">Video, podcasts, and appearances.</h2></div><a class="text-link" href="/media/">Browse media ↗</a></div><p class="library-empty">No published episodes or appearances have been added yet.</p></section>
+  </section>
+</SiteLayout>

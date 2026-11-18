@@ -1,0 +1,159 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { getAuth } from "../../lib/auth";
+let available = true;
+let adminEmail = "";
+try {
+  const auth = await getAuth();
+  const session = await auth.api.getSession({ headers: Astro.request.headers });
+  if (!session) return Astro.redirect("/admin/login/");
+  if (session.user.role !== "admin") { Astro.response.status = 403; available = false; }
+  else if (!session.user.twoFactorEnabled) return Astro.redirect("/admin/mfa/");
+  else adminEmail = session.user.email;
+} catch { available = false; }
+Astro.response.headers.set("Cache-Control", "private, no-store");
+---
+<SiteLayout title="Portfolio admin - Saad" description="Private administration for articles, curated resources, and visitor feedback." noindex={true} showFeedback={false}>
+  <section class="admin-shell container" aria-labelledby="admin-title">
+    <header class="admin-heading"><div><p class="eyebrow">Private workspace</p><h1 id="admin-title">Portfolio admin</h1><p>{adminEmail ? `Signed in as ${adminEmail}` : "Admin service status"}</p></div><div class="admin-top-actions"><a class="text-link" href="/">View portfolio ↗</a><button class="text-link admin-signout" type="button" id="sign-out">Sign out</button></div></header>
+    {available ? <>
+      <nav class="admin-tabs" aria-label="Admin sections">
+        <button type="button" class="admin-tab active" aria-selected="true" data-pane="posts-pane">Articles</button>
+        <button type="button" class="admin-tab" aria-selected="false" data-pane="resources-pane">Library</button>
+        <button type="button" class="admin-tab" aria-selected="false" data-pane="feedback-pane">Feedback</button>
+        <button type="button" class="admin-tab" aria-selected="false" data-pane="audit-pane">Audit log</button>
+        <a class="admin-tab-link" href="/admin/mfa/">Authenticator &amp; recovery</a>
+      </nav>
+      <p class="admin-status" id="admin-status" role="status" aria-live="polite">Loading admin data…</p>
+      <section class="admin-pane active" id="posts-pane" aria-labelledby="posts-heading">
+        <div class="admin-columns"><div><div class="admin-section-heading"><div><p class="eyebrow">Writing desk</p><h2 id="posts-heading">Articles</h2></div><button type="button" class="button button-small" id="new-post">New article</button></div><div id="post-list" class="admin-record-list"></div></div>
+          <form class="admin-editor" id="post-form">
+            <h3 id="post-form-title">New article draft</h3><input type="hidden" name="id" />
+            <label>Title<input name="title" required minlength="3" maxlength="140" /></label>
+            <label>URL slug<input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxlength="100" /></label>
+            <label>Summary<textarea name="description" required minlength="12" maxlength="280" rows="3"></textarea></label>
+            <label>Article in Markdown<textarea name="bodyMarkdown" required minlength="20" maxlength="50000" rows="14"></textarea></label>
+            <label>Tags, comma separated<input name="tags" maxlength="260" /></label>
+            <label>Reading time<input name="readTime" maxlength="40" placeholder="5 min read" /></label>
+            <label>Cover image path<input name="coverImage" placeholder="/images/blog/example.webp" /></label>
+            <label>Cover image alt text<input name="coverImageAlt" maxlength="300" /></label>
+            <details><summary>Search and social metadata</summary><div class="admin-details-content">
+              <label>SEO title<input name="seoTitle" maxlength="140" /></label><label>SEO description<textarea name="seoDescription" maxlength="300" rows="2"></textarea></label>
+              <label>Canonical URL<input name="canonicalUrl" type="url" placeholder="https://saadsrabon.com/blog/slug/" /></label><label>Social image path<input name="socialImage" placeholder="/social-card.png" /></label>
+            </div></details>
+            <label>State<select name="status"><option value="draft">Draft</option><option value="published">Published</option></select></label>
+            <div class="admin-actions"><button type="submit" class="button">Save article</button><button type="button" class="quiet-button" id="delete-post" hidden>Delete draft</button></div>
+            <p class="admin-form-message" id="post-message" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+      <section class="admin-pane" id="resources-pane" aria-labelledby="resources-heading" hidden>
+        <div class="admin-columns"><div><div class="admin-section-heading"><div><p class="eyebrow">Curated shelf</p><h2 id="resources-heading">Library resources</h2></div><button type="button" class="button button-small" id="new-resource">New resource</button></div><div id="resource-list" class="admin-record-list"></div></div>
+          <form class="admin-editor" id="resource-form"><h3 id="resource-form-title">New resource draft</h3><input type="hidden" name="id" />
+            <label>Title<input name="title" required minlength="2" maxlength="140" /></label><label>URL slug<input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxlength="100" /></label>
+            <label>Explanation<textarea name="description" required minlength="12" maxlength="500" rows="3"></textarea></label><label>Author or source<input name="author" maxlength="120" /></label>
+            <label>Category<select name="category"><option value="learning">Learning</option><option value="tools">Tools</option><option value="reading">Reading</option><option value="media">Media</option></select></label>
+            <label>External link (HTTPS)<input name="url" type="url" required placeholder="https://" /></label><label>Image path<input name="coverImage" placeholder="/images/library/example.webp" /></label><label>Image alt text<input name="coverImageAlt" maxlength="300" /></label>
+            <details><summary>Search metadata</summary><div class="admin-details-content"><label>SEO title<input name="seoTitle" maxlength="140" /></label><label>SEO description<textarea name="seoDescription" maxlength="300" rows="2"></textarea></label></div></details>
+            <label>State<select name="status"><option value="draft">Draft</option><option value="published">Published</option></select></label><div class="admin-actions"><button type="submit" class="button">Save resource</button><button type="button" class="quiet-button" id="delete-resource" hidden>Delete draft</button></div><p class="admin-form-message" id="resource-message" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+      <section class="admin-pane" id="feedback-pane" aria-labelledby="feedback-heading" hidden><div class="admin-section-heading"><div><p class="eyebrow">Visitor notes</p><h2 id="feedback-heading">Feedback inbox</h2></div><p>Messages include only the selected topic and note. Contact details and location are not collected.</p></div><div id="feedback-list" class="feedback-inbox"></div></section>
+      <section class="admin-pane" id="audit-pane" aria-labelledby="audit-heading" hidden><div class="admin-section-heading"><div><p class="eyebrow">Change history</p><h2 id="audit-heading">Audit log</h2></div><p>Records admin actions and IDs, not article bodies or visitor message text.</p></div><div id="audit-list" class="admin-record-list"></div></section>
+    </> : <div class="case-disclaimer"><strong>Admin services are not available.</strong><p>Check the PostgreSQL connection and migration, authentication secret, and admin configuration.</p></div>}
+  </section>
+  {available && <script>
+    import { createAuthClient } from "better-auth/client";
+    import { twoFactorClient } from "better-auth/client/plugins";
+    const authClient = createAuthClient({ plugins: [twoFactorClient()] });
+    const status = document.querySelector<HTMLElement>("#admin-status");
+    let csrfToken = "";
+    let currentPostId = "";
+    let currentResourceId = "";
+    let postRows: any[] = [];
+    let resourceRows: any[] = [];
+    const setStatus = (text: string) => { if (status) status.textContent = text; };
+    const getCsrf = async () => {
+      const response = await fetch("/api/admin/csrf", { cache: "no-store", credentials: "same-origin" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Admin session expired.");
+      csrfToken = data.csrfToken;
+    };
+    const api = async (url: string, method = "GET", body?: unknown) => {
+      const headers: Record<string, string> = {};
+      if (body !== undefined) { await getCsrf(); headers["Content-Type"] = "application/json"; headers["X-CSRF-Token"] = csrfToken; }
+      const response = await fetch(url, { method, credentials: "same-origin", cache: "no-store", headers, body: body === undefined ? undefined : JSON.stringify(body) });
+      if (response.status === 401) { window.location.assign("/admin/login/"); throw new Error("Please sign in again."); }
+      if (response.status === 428) { window.location.assign("/admin/mfa/"); throw new Error("Authenticator setup is required."); }
+      if (response.status === 204) return null;
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Request failed.");
+      return data;
+    };
+    const make = (tag: string, text: string, className = "") => { const node = document.createElement(tag); node.textContent = text; if (className) node.className = className; return node; };
+    const fillForm = (form: HTMLFormElement, values: Record<string, unknown>) => {
+      for (const [key, value] of Object.entries(values)) {
+        const input = form.elements.namedItem(key) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+        if (input) input.value = Array.isArray(value) ? value.join(", ") : String(value ?? "");
+      }
+    };
+    const clearPost = () => { const form = document.querySelector<HTMLFormElement>("#post-form"); form?.reset(); currentPostId = ""; document.querySelector<HTMLElement>("#post-form-title")!.textContent = "New article draft"; document.querySelector<HTMLButtonElement>("#delete-post")!.hidden = true; };
+    const clearResource = () => { const form = document.querySelector<HTMLFormElement>("#resource-form"); form?.reset(); currentResourceId = ""; document.querySelector<HTMLElement>("#resource-form-title")!.textContent = "New resource draft"; document.querySelector<HTMLButtonElement>("#delete-resource")!.hidden = true; };
+    const loadPosts = async () => {
+      const data = await api("/api/admin/posts"); postRows = data.posts;
+      const list = document.querySelector<HTMLElement>("#post-list")!; list.replaceChildren();
+      for (const item of postRows) {
+        const row = make("article", "", "admin-record"); const copy = make("div", "", "admin-record-copy"); copy.append(make("p", item.status === "draft" ? "Unpublished draft" : "Published", "draft-label"), make("h3", item.title), make("p", `/${item.slug}/ · Updated ${new Date(item.updatedAt).toLocaleDateString()}`, "blog-meta"));
+        const edit = make("button", "Edit", "quiet-button") as HTMLButtonElement; edit.type = "button"; edit.addEventListener("click", () => { currentPostId = item.id; fillForm(document.querySelector<HTMLFormElement>("#post-form")!, { ...item, tags: item.tags }); document.querySelector<HTMLElement>("#post-form-title")!.textContent = "Edit article"; document.querySelector<HTMLButtonElement>("#delete-post")!.hidden = item.status !== "draft"; document.querySelector<HTMLFormElement>("#post-form")!.scrollIntoView({ behavior: "smooth", block: "start" }); });
+        row.append(copy, edit); list.append(row);
+      }
+      setStatus(`${postRows.length} article records loaded.`);
+    };
+    const loadResources = async () => {
+      const data = await api("/api/admin/resources"); resourceRows = data.resources;
+      const list = document.querySelector<HTMLElement>("#resource-list")!; list.replaceChildren();
+      for (const item of resourceRows) {
+        const row = make("article", "", "admin-record"); const copy = make("div", "", "admin-record-copy"); copy.append(make("p", `${item.status} · ${item.category}`, "draft-label"), make("h3", item.title), make("p", item.url, "blog-meta"));
+        const edit = make("button", "Edit", "quiet-button") as HTMLButtonElement; edit.type = "button"; edit.addEventListener("click", () => { currentResourceId = item.id; fillForm(document.querySelector<HTMLFormElement>("#resource-form")!, item); document.querySelector<HTMLElement>("#resource-form-title")!.textContent = "Edit resource"; document.querySelector<HTMLButtonElement>("#delete-resource")!.hidden = item.status !== "draft"; document.querySelector<HTMLFormElement>("#resource-form")!.scrollIntoView({ behavior: "smooth", block: "start" }); });
+        row.append(copy, edit); list.append(row);
+      }
+    };
+    const loadFeedback = async () => {
+      const data = await api("/api/admin/feedback"); const list = document.querySelector<HTMLElement>("#feedback-list")!; list.replaceChildren();
+      if (!data.feedback.length) { list.append(make("p", "No feedback yet.", "empty-state")); return; }
+      for (const item of data.feedback) {
+        const card = make("article", "", "feedback-card"); const head = make("div", "", "feedback-card-head"); head.append(make("span", item.category, "project-group"), make("time", new Date(item.createdAt).toLocaleString(), "blog-meta"));
+        const note = make("p", item.message, "feedback-note"); const controls = make("div", "", "admin-actions");
+        const select = document.createElement("select"); select.setAttribute("aria-label", "Feedback status"); for (const value of ["new", "reviewed", "archived"]) { const option = document.createElement("option"); option.value = value; option.textContent = value; option.selected = value === item.status; select.append(option); }
+        const save = make("button", "Update status", "quiet-button") as HTMLButtonElement; save.type = "button"; save.addEventListener("click", async () => { try { await api(`/api/admin/feedback/${encodeURIComponent(item.id)}`, "PATCH", { status: select.value }); setStatus("Feedback status saved."); } catch (error) { setStatus(error instanceof Error ? error.message : "Could not update feedback."); } }); controls.append(select, save); card.append(head, note, controls); list.append(card);
+      }
+    };
+    const loadAudit = async () => { const data = await api("/api/admin/audit"); const list = document.querySelector<HTMLElement>("#audit-list")!; list.replaceChildren(); for (const event of data.events) { const row = make("article", "", "admin-record"); row.append(make("div", "", "admin-record-copy")); row.firstElementChild!.append(make("h3", event.action), make("p", `${event.entityType} ${event.entityId} · ${new Date(event.createdAt).toLocaleString()}`, "blog-meta")); list.append(row); } };
+    document.querySelectorAll<HTMLButtonElement>(".admin-tab").forEach((tab) => tab.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab").forEach((item) => { item.classList.remove("active"); item.setAttribute("aria-selected", "false"); });
+      document.querySelectorAll<HTMLElement>(".admin-pane").forEach((pane) => { pane.classList.remove("active"); pane.hidden = true; });
+      tab.classList.add("active"); tab.setAttribute("aria-selected", "true"); const pane = document.getElementById(tab.dataset.pane ?? ""); if (pane) { pane.hidden = false; pane.classList.add("active"); }
+      void (tab.dataset.pane === "resources-pane" ? loadResources() : tab.dataset.pane === "feedback-pane" ? loadFeedback() : tab.dataset.pane === "audit-pane" ? loadAudit() : loadPosts()).catch((error) => setStatus(error instanceof Error ? error.message : "Could not load section."));
+    }));
+    document.querySelector<HTMLButtonElement>("#new-post")?.addEventListener("click", clearPost);
+    document.querySelector<HTMLButtonElement>("#new-resource")?.addEventListener("click", clearResource);
+    document.querySelector<HTMLFormElement>("#post-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault(); const form = event.currentTarget as HTMLFormElement; if (!form.reportValidity()) return;
+      const values = new FormData(form); const payload: Record<string, unknown> = Object.fromEntries(values.entries()); payload.tags = String(values.get("tags") ?? "").split(",").map((tag) => tag.trim()).filter(Boolean); delete payload.id;
+      const message = document.querySelector<HTMLElement>("#post-message")!; message.textContent = "Saving…";
+      try { const result = await api(currentPostId ? `/api/admin/posts/${encodeURIComponent(currentPostId)}` : "/api/admin/posts", currentPostId ? "PATCH" : "POST", payload); currentPostId = result.post.id; message.textContent = result.post.status === "published" ? "Article published." : "Draft saved."; await loadPosts(); }
+      catch (error) { message.textContent = error instanceof Error ? error.message : "Could not save article."; }
+    });
+    document.querySelector<HTMLButtonElement>("#delete-post")?.addEventListener("click", async () => { if (!currentPostId || !confirm("Delete this unpublished draft?")) return; try { await api(`/api/admin/posts/${encodeURIComponent(currentPostId)}`, "DELETE", {}); clearPost(); await loadPosts(); } catch (error) { setStatus(error instanceof Error ? error.message : "Could not delete draft."); } });
+    document.querySelector<HTMLFormElement>("#resource-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault(); const form = event.currentTarget as HTMLFormElement; if (!form.reportValidity()) return; const payload = Object.fromEntries(new FormData(form).entries()); delete payload.id;
+      const message = document.querySelector<HTMLElement>("#resource-message")!; message.textContent = "Saving…";
+      try { const result = await api(currentResourceId ? `/api/admin/resources/${encodeURIComponent(currentResourceId)}` : "/api/admin/resources", currentResourceId ? "PATCH" : "POST", payload); currentResourceId = result.resource.id; message.textContent = result.resource.status === "published" ? "Resource published." : "Draft saved."; await loadResources(); }
+      catch (error) { message.textContent = error instanceof Error ? error.message : "Could not save resource."; }
+    });
+    document.querySelector<HTMLButtonElement>("#delete-resource")?.addEventListener("click", async () => { if (!currentResourceId || !confirm("Delete this unpublished resource?")) return; try { await api(`/api/admin/resources/${encodeURIComponent(currentResourceId)}`, "DELETE", {}); clearResource(); await loadResources(); } catch (error) { setStatus(error instanceof Error ? error.message : "Could not delete draft."); } });
+    document.querySelector<HTMLButtonElement>("#sign-out")?.addEventListener("click", async () => { await authClient.signOut(); window.location.assign("/admin/login/"); });
+    void loadPosts().catch((error) => setStatus(error instanceof Error ? error.message : "Could not load admin data."));
+  </script>}
+</SiteLayout>
