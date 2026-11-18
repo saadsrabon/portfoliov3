@@ -21,6 +21,11 @@ const title = `${project.name} — ${concept ? "Concept" : "Project notes"}`;
       <div class="case-meta"><span><b>Type</b>{concept ? "Independent concept" : "Selected product work"}</span><span><b>Role</b>{project.role}</span><span><b>Stack / areas</b>{project.tags.join(" · ")}</span></div>
       {project.url && <a class="button" href={project.url} target="_blank" rel="noopener noreferrer">{concept ? "Open live concept" : project.slug === "job-engineer" ? "Visit JobOS site" : "Visit live project"} <span aria-hidden="true">↗</span></a>}
     </header>
+    {!concept && project.illustrations.length > 0 && <section class="case-section" aria-labelledby="illustrations-title">
+      <div class="case-section-heading"><div><p class="eyebrow">Product illustrations</p><h2 id="illustrations-title">Inside JobOS</h2></div><p>Original feature illustrations from the Job Engineer landing-page repository, showing the browser extension, resume tools, email writer, interview workspace and analytics.</p></div>
+      <div class="case-illustration-grid" data-motion-stagger>{project.illustrations.map((image) => <figure class="case-illustration" data-motion-card><img src={image.src} alt={image.alt} width="800" height="500" loading="lazy" /><figcaption>{image.title}</figcaption></figure>)}</div>
+      <p class="case-illustration-note">These illustrations use example names, roles and dashboard values to show the feature interfaces. <a href="https://github.com/saadsrabon/Job-Engineer/tree/main/apps/landing/public/landing/features" target="_blank" rel="noopener noreferrer">View the original feature assets on GitHub <span aria-hidden="true">↗</span></a></p>
+    </section>}
     {concept ? <>
       <section class="case-section" aria-labelledby="gallery-title"><div class="case-section-heading"><div><p class="eyebrow">Rendered pages</p><h2 id="gallery-title">A closer look</h2></div><p>Authentic screenshots of the live concept, captured at desktop and mobile sizes.</p></div>
         <div class="case-gallery" data-motion-stagger>{project.gallery.map((image) => <figure class="device-shot" data-motion-card><figcaption>{image.label}</figcaption><div class:list={["device-frame", image.label === "Mobile view" ? "device-mobile" : "device-desktop"]}><img src={image.src} alt={image.alt} loading="lazy" /></div></figure>)}</div>
