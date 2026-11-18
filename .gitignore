@@ -6,6 +6,7 @@
 # Astro build output
 /.astro/
 /dist/
+/.local/
 
 # production
 /build

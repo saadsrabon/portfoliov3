@@ -1,0 +1,55 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+const setupConfigured = Boolean(process.env.ADMIN_EMAIL && process.env.ADMIN_BOOTSTRAP_SECRET);
+Astro.response.headers.set("Cache-Control", "no-store");
+---
+<SiteLayout title="First admin setup - Saad" description="Provision the first private portfolio administrator." noindex={true} showFeedback={false}>
+  <section class="container admin-login-shell" aria-labelledby="setup-title">
+    <a class="text-link" href="/admin/login/">← Admin sign in</a><p class="eyebrow" style="margin-top:34px">One-time setup</p><h1 id="setup-title">Provision the first admin</h1>
+    <p class="case-lede">This page works only while the server has a bootstrap secret configured and no admin exists. Enter a new password here; do not reuse a credential shared in chat.</p>
+    {setupConfigured ? <form class="admin-form-card" id="bootstrap-form">
+      <label>Admin email<input name="email" type="email" autocomplete="username" required maxlength="254" /></label>
+      <label>Display name<input name="name" type="text" autocomplete="name" required minlength="2" maxlength="100" /></label>
+      <label>New password<input name="password" type="password" autocomplete="new-password" required minlength="12" maxlength="128" /></label>
+      <label>One-time setup secret<input name="bootstrapSecret" type="password" autocomplete="off" required minlength="32" maxlength="256" /></label>
+      <button class="button" type="submit">Create admin <span aria-hidden="true">↗</span></button>
+      <p class="admin-message" id="bootstrap-message" role="status" aria-live="polite"></p>
+    </form> : <div class="case-disclaimer"><strong>Setup is not configured.</strong><p>Set `ADMIN_EMAIL` and a random `ADMIN_BOOTSTRAP_SECRET` in the hosting environment, connect/migrate the private database, and redeploy. Keep the secret out of source control.</p></div>}
+  </section>
+  {setupConfigured && <script>
+    let csrfToken = "";
+    const form = document.querySelector<HTMLFormElement>("#bootstrap-form");
+    const message = document.querySelector<HTMLElement>("#bootstrap-message");
+    const loadToken = async () => {
+      try {
+        const response = await fetch("/api/admin/bootstrap-token", { cache: "no-store", credentials: "same-origin" });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "First-admin setup is unavailable.");
+        csrfToken = result.csrfToken;
+        const email = form?.elements.namedItem("email") as HTMLInputElement | null;
+        if (email) { email.value = result.email; email.readOnly = true; }
+      } catch (error) { if (message) message.textContent = error instanceof Error ? error.message : "Setup is unavailable."; }
+    };
+    void loadToken();
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!message || !form.reportValidity()) return;
+      const values = new FormData(form);
+      const payload = { email: values.get("email"), name: values.get("name"), password: values.get("password"), bootstrapSecret: values.get("bootstrapSecret") };
+      const passwordInput = form.elements.namedItem("password") as HTMLInputElement | null;
+      const secretInput = form.elements.namedItem("bootstrapSecret") as HTMLInputElement | null;
+      if (passwordInput) passwordInput.value = "";
+      if (secretInput) secretInput.value = "";
+      const button = form.querySelector<HTMLButtonElement>("button[type='submit']"); if (button) button.disabled = true;
+      message.textContent = "Provisioning…";
+      try {
+        const response = await fetch("/api/admin/bootstrap", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken }, body: JSON.stringify(payload) });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Setup failed.");
+        form.reset();
+        message.textContent = "Admin created. Remove or rotate ADMIN_BOOTSTRAP_SECRET in the hosting settings, then sign in and finish authenticator setup.";
+      } catch (error) { message.textContent = error instanceof Error ? error.message : "Setup failed. Please retry."; }
+      finally { if (button) button.disabled = false; }
+    });
+  </script>}
+</SiteLayout>

@@ -1,14 +1,18 @@
 ---
 import SiteLayout from "../../layouts/SiteLayout.astro";
-import { getCollection } from "astro:content";
-const posts = (await getCollection("blog", ({ data }) => !import.meta.env.PROD || !data.draft)).sort((a, b) => (b.data.pubDate?.getTime() ?? 0) - (a.data.pubDate?.getTime() ?? 0));
+import { desc, eq } from "drizzle-orm";
+import { posts as postTable } from "../../db/schema";
+import { getDatabase } from "../../lib/database";
+const database = await getDatabase();
+const posts = await database.select().from(postTable).where(eq(postTable.status, "published")).orderBy(desc(postTable.publishedAt));
 ---
 <SiteLayout active="blog" title="Writing - Saad" description="Technical writing on payment retries, recoverable email imports, and product engineering.">
   <header class="container page-intro"><p class="eyebrow">Writing desk</p><h1>Notes from the systems I work on.</h1><p>Short practical pieces on product engineering, reliability, and the edges that make software work in the real world.</p></header>
   <section class="container section" aria-label="Articles"><div class="blog-list">
     {posts.map((post) => <article class="blog-card" data-reveal>
-      <div>{post.data.draft && <span class="draft-label">Unpublished draft</span>}<p class="blog-meta">{post.data.readTime ?? "Article"}</p></div>
-      <div><h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2><p>{post.data.description}</p>{post.data.draft && <p class="blog-meta">For review · Not a published article</p>}</div>
+      <div><p class="blog-meta">{post.readTime ?? "Article"}</p>{post.publishedAt && <time class="blog-meta" datetime={post.publishedAt.toISOString()}>{post.publishedAt.toLocaleDateString("en", { year: "numeric", month: "long", day: "numeric" })}</time>}</div>
+      <div><h2><a href={`/blog/${post.slug}/`}>{post.title}</a></h2><p>{post.description}</p></div>
     </article>)}
+    {!posts.length && <p class="empty-state">No articles have been published yet. New writing will appear here after review.</p>}
   </div></section>
 </SiteLayout>

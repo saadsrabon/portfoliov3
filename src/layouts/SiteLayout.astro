@@ -8,7 +8,9 @@ interface Props {
   canonical?: string;
   schema?: Record<string, unknown>;
   ogType?: "website" | "article";
+  socialImage?: string;
   noindex?: boolean;
+  showFeedback?: boolean;
 }
 
 const {
@@ -18,10 +20,13 @@ const {
   canonical,
   schema,
   ogType = "website",
+  socialImage = "/social-card.png",
   noindex = false,
+  showFeedback = true,
 } = Astro.props;
 const currentUrl = Astro.url.pathname === "/" ? "" : Astro.url.pathname.replace(/\/$/, "");
 const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
+const socialImageUrl = new URL(socialImage, "https://saadsrabon.com").toString();
 ---
 <!doctype html>
 <html lang="en">
@@ -40,11 +45,11 @@ const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:image" content="https://saadsrabon.com/social-card.png" />
+    <meta property="og:image" content={socialImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://saadsrabon.com/social-card.png" />
+    <meta name="twitter:image" content={socialImageUrl} />
     <title>{title}</title>
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, "\\u003c")} />}
   </head>
@@ -58,6 +63,7 @@ const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
           <a href="/journey/" class:list={{ active: active === "journey" }} aria-current={active === "journey" ? "page" : undefined}>Journey</a>
           <a href="/work/" class:list={{ active: active === "work" }} aria-current={active === "work" ? "page" : undefined}>Work</a>
           <a href="/blog/" class:list={{ active: active === "blog" }} aria-current={active === "blog" ? "page" : undefined}>Writing</a>
+          <a href="/library/" class:list={{ active: active === "library" }} aria-current={active === "library" ? "page" : undefined}>Library</a>
           <a href="/media/" class:list={{ active: active === "media" }} aria-current={active === "media" ? "page" : undefined}>Media</a>
           <a href="/contact/" class:list={{ active: active === "contact" }} aria-current={active === "contact" ? "page" : undefined}>Contact</a>
         </nav>
@@ -69,6 +75,7 @@ const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
             <a href="/journey/" class:list={{ active: active === "journey" }} aria-current={active === "journey" ? "page" : undefined}>Journey</a>
             <a href="/work/" class:list={{ active: active === "work" }} aria-current={active === "work" ? "page" : undefined}>Work</a>
             <a href="/blog/" class:list={{ active: active === "blog" }} aria-current={active === "blog" ? "page" : undefined}>Writing</a>
+            <a href="/library/" class:list={{ active: active === "library" }} aria-current={active === "library" ? "page" : undefined}>Library</a>
             <a href="/media/" class:list={{ active: active === "media" }} aria-current={active === "media" ? "page" : undefined}>Media</a>
             <a href="/contact/" class:list={{ active: active === "contact" }} aria-current={active === "contact" ? "page" : undefined}>Contact</a>
             <a href="/book/">Book a call ↗</a>
@@ -87,16 +94,22 @@ const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
         </nav>
       </div>
     </footer>
-    <aside class="hello-widget" aria-label="Feedback" hidden>
+    {showFeedback && <aside class="hello-widget" aria-label="Feedback" hidden>
       <div class="hello-panel" id="hello-panel" aria-labelledby="hello-title" hidden>
         <div class="hello-top"><div><p class="eyebrow">A quick note</p><h2 id="hello-title">How is the site feeling?</h2></div><button class="hello-close" type="button" aria-label="Close feedback panel">×</button></div>
-        <p>Your thoughts are welcome. The button below opens your email app so you can review what you send. This site does not store feedback or request your location.</p>
-        <a class="button hello-mail" href="mailto:saadsrabon2@gmail.com?subject=Portfolio%20feedback">Write feedback <span aria-hidden="true">↗</span></a>
+        <p>Your thoughts are welcome. Only your note and the selected topic are stored for review. No contact details or location are requested.</p>
+        <form class="feedback-form" id="visitor-feedback">
+          <label>Topic<select name="category"><option value="general">General</option><option value="bug">Something is broken</option><option value="accessibility">Accessibility</option><option value="content">Content</option></select></label>
+          <label>Your note<textarea name="message" minlength="8" maxlength="2000" required rows="4"></textarea></label>
+          <label class="feedback-honeypot" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+          <button class="button hello-submit" type="submit">Send feedback <span aria-hidden="true">↗</span></button>
+          <p class="feedback-status" role="status" aria-live="polite"></p>
+        </form>
         <button class="sound-toggle" type="button" aria-pressed="false">Sound: off</button>
-        <p class="hello-privacy">Sound is silent unless you turn it on here. No location is collected.</p>
+        <p class="hello-privacy">Sound is silent unless you turn it on here. The note is retained for review; no location is collected.</p>
       </div>
       <button class="hello-launch" type="button" aria-expanded="false" aria-controls="hello-panel"><span aria-hidden="true">✳</span><span>Say hello</span></button>
-    </aside>
+    </aside>}
     <script>
       import { gsap } from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -128,7 +141,7 @@ const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
         const setOpen = (open: boolean) => {
           panel.hidden = !open;
           launcher.setAttribute("aria-expanded", String(open));
-          if (open) panel.querySelector<HTMLAnchorElement>(".hello-mail")?.focus();
+        if (open) panel.querySelector<HTMLSelectElement>("select")?.focus();
         };
         launcher.addEventListener("click", () => setOpen(panel.hidden));
         closer.addEventListener("click", () => { setOpen(false); localStorage.setItem("saad-feedback-dismissed", "1"); widget.hidden = true; document.querySelector<HTMLElement>("#main")?.focus(); });
@@ -151,6 +164,27 @@ const canonicalUrl = canonical ?? "https://saadsrabon.com" + currentUrl + "/";
               oscillator.start(); oscillator.stop(context.currentTime + 0.12);
               oscillator.onended = () => { void context.close(); };
             }
+          }
+        });
+        const feedbackForm = document.querySelector<HTMLFormElement>("#visitor-feedback");
+        const status = document.querySelector<HTMLElement>(".feedback-status");
+        feedbackForm?.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          if (!status || !feedbackForm.reportValidity()) return;
+          const form = new FormData(feedbackForm);
+          const submit = feedbackForm.querySelector<HTMLButtonElement>("button[type='submit']");
+          if (submit) submit.disabled = true;
+          status.textContent = "Sending…";
+          try {
+            const response = await fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: form.get("message"), category: form.get("category"), website: form.get("website") }) });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || "Feedback could not be sent.");
+            feedbackForm.reset();
+            status.textContent = "Thank you. Your feedback was saved for review.";
+          } catch (error) {
+            status.textContent = error instanceof Error ? error.message : "Feedback could not be sent. Please try again later.";
+          } finally {
+            if (submit) submit.disabled = false;
           }
         });
       }

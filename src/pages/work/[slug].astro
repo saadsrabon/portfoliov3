@@ -2,6 +2,8 @@
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { caseStudies, conceptProjects } from "../../data/site";
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return [
     ...conceptProjects.map((project) => ({ params: { slug: project.slug }, props: { project, concept: true } })),
