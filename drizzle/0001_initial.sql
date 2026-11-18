@@ -18,3 +18,5 @@ CREATE INDEX IF NOT EXISTS "audit_created_idx" ON "audit_events" ("created_at" D
 CREATE TABLE IF NOT EXISTS "resources" ("id" text PRIMARY KEY, "slug" text NOT NULL UNIQUE, "title" text NOT NULL, "description" text NOT NULL, "author" text, "category" text NOT NULL CHECK ("category" IN ('learning', 'tools', 'reading', 'media')), "url" text NOT NULL, "coverImage" text, "coverImageAlt" text, "status" text NOT NULL DEFAULT 'draft' CHECK ("status" IN ('draft', 'published')), "seoTitle" text, "seoDescription" text, "authorId" text NOT NULL REFERENCES "user"("id") ON DELETE RESTRICT, "createdAt" timestamptz NOT NULL DEFAULT now(), "updatedAt" timestamptz NOT NULL DEFAULT now(), CONSTRAINT "resource_cover_alt_pair" CHECK ("coverImage" IS NULL OR length(trim("coverImageAlt")) > 0));
 CREATE INDEX IF NOT EXISTS "resources_category_status_idx" ON "resources" ("category", "status");
 CREATE TABLE IF NOT EXISTS "bootstrap_attempts" ("key_hash" text PRIMARY KEY, "window_started_at" timestamptz NOT NULL, "count" integer NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "bootstrap_claim" ("id" text PRIMARY KEY CHECK ("id" = 'owner'), "created_at" timestamptz NOT NULL DEFAULT now());

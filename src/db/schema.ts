@@ -122,6 +122,11 @@ export const bootstrapAttempts = pgTable("bootstrap_attempts", {
   count: integer("count").notNull(),
 });
 
+export const bootstrapClaim = pgTable("bootstrap_claim", {
+  id: text("id").primaryKey(),
+  createdAt: now("created_at"),
+});
+
 export const auditEvents = pgTable("audit_events", {
   id: text("id").primaryKey(),
   actorId: text("actor_id").notNull().references(() => user.id, { onDelete: "restrict" }),

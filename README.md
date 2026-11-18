@@ -41,21 +41,20 @@ This project now uses Astro's Vercel server adapter, Better Auth, Drizzle, and P
 
 ### First production setup
 
-1. Provision a private PostgreSQL database (for example Neon) and connect it to the Vercel project through protected environment variables. Keep the database role limited to this app and enable provider backups.
-2. Configure these values for the preview environment first. Never commit them or include their values in build logs:
+Setup is disabled unless a valid, unexpired bootstrap hash and expiry are configured. Never put the code, password, or secrets in this repository, an `.env` file, a URL, chat, logs, or analytics. The owner chooses their own email and a new unique password in the browser; no email address is exposed by the setup endpoint. Email is not marked verified, since this app does not verify it. Public sign-up stays disabled.
 
-   - `DATABASE_URL` - PostgreSQL connection URL.
-   - `BETTER_AUTH_SECRET` - at least 32 characters of cryptographically random data.
-   - `BETTER_AUTH_URL` - exact HTTPS deployment URL; for Vercel previews, verify the URL matches the preview host.
-   - `ADMIN_EMAIL` - the sole account permitted for first-time provisioning.
-   - `ADMIN_BOOTSTRAP_SECRET` - one-time random secret with at least 32 characters.
+1. Provision a private PostgreSQL database and configure `DATABASE_URL`, a random `BETTER_AUTH_SECRET` of at least 32 characters, and the exact HTTPS deployment URL as `BETTER_AUTH_URL` in the host's protected settings. Apply `pnpm db:migrate` from a secure environment. This idempotent migration adds the bootstrap claim table without deleting existing data.
+2. On a trusted machine, generate a 32-byte random setup code and its SHA-256 digest. For example, run the following locally in a private terminal (avoid recorded terminals or shell history), and do not paste its output into chat:
 
-3. Run `pnpm db:migrate` from a secure environment with `DATABASE_URL` set. This applies `drizzle/0001_initial.sql`; do not put credentials into a committed `.env` file.
-4. Deploy the feature branch to a Vercel preview, visit `/admin/setup/`, and enter a new password generated for this account plus the bootstrap secret. Do not reuse a password shared in chat or elsewhere.
-5. Remove or rotate `ADMIN_BOOTSTRAP_SECRET` in the hosting environment, then sign in at `/admin/login/`, enroll an authenticator, and store the recovery codes securely. Vercel functions require outbound database access and suitable connection limits.
-6. Verify login, MFA, draft preview, publication, public sign-up denial, CSRF rejection, audit entries, feedback review, sitemap entries, and backups on the preview before using the admin for real content.
+   ```sh
+   node -e "const c=require('node:crypto');const code=c.randomBytes(32).toString('base64url');console.log('Code:',code,'\nSHA-256:',c.createHash('sha256').update(code).digest('hex'),'\nExpires:',new Date(Date.now()+15*60*1000).toISOString())"
+   ```
 
-Local checks: `pnpm check`, `pnpm build`, `pnpm dev`. On Windows, the Vercel adapter's local build packaging may require symlink privileges; run the final deployment build in Vercel's Linux builder if local packaging reports `EPERM` creating dependency symlinks. No production deployment or production credentials are part of this branch work.
+3. Put only the lowercase digest in the hosting provider's protected `ADMIN_BOOTSTRAP_HASH` setting and the printed UTC timestamp in `ADMIN_BOOTSTRAP_EXPIRES_AT`. The timestamp must be in the exact ISO format printed above, in the future and no more than 30 minutes away. Deploy the configuration securely. If deployment takes too long, generate a fresh code and digest and repeat. Transfer the code to the owner through a trusted private channel, or have them generate it themselves. Never put the code in a link.
+4. The owner visits the trusted HTTPS `/admin/setup/` page directly, enters the code, their chosen email, display name and a new unique password, and submits the form. Do not reuse the password previously shared in chat. The transaction consumes the one-time claim along with creating the account and audit record. If setup fails before commit, correct the issue and retry before expiry; if it succeeds, the code cannot be replayed even if the settings remain in place.
+5. Remove both bootstrap settings from the host after setup. Sign in at `/admin/login/`, enroll an authenticator before using admin tools, and store recovery codes securely. Verify login, MFA, authorization, draft preview, publication, public sign-up denial, CSRF rejection, audit entries, feedback review, sitemap entries, and backups in a preview environment before use. Database backups and suitable connection limits remain necessary.
+
+Local checks: `pnpm test:bootstrap` (uses a temporary synthetic PGlite database), `pnpm check`, `pnpm build`, `pnpm dev`. On Windows, the Vercel adapter's local build packaging may require symlink privileges; run the final deployment build in Vercel's Linux builder if local packaging reports `EPERM` creating dependency symlinks. No production deployment or production credentials are part of this branch work.
 
 ### Cost estimate
 
