@@ -8,8 +8,8 @@ const posts = await database.select().from(postTable).where(eq(postTable.status,
 ---
 <SiteLayout active="blog" title="Writing - Saad" description="Technical writing on payment retries, recoverable email imports, and product engineering.">
   <header class="container page-intro"><p class="eyebrow">Writing desk</p><h1>Notes from the systems I work on.</h1><p>Short practical pieces on product engineering, reliability, and the edges that make software work in the real world.</p></header>
-  <section class="container section" aria-label="Articles"><div class="blog-list">
-    {posts.map((post) => <article class="blog-card" data-reveal>
+  <section class="container section" aria-label="Articles"><div class="blog-list" data-motion-stagger>
+    {posts.map((post) => <article class="blog-card" data-motion-card>
       <div><p class="blog-meta">{post.readTime ?? "Article"}</p>{post.publishedAt && <time class="blog-meta" datetime={post.publishedAt.toISOString()}>{post.publishedAt.toLocaleDateString("en", { year: "numeric", month: "long", day: "numeric" })}</time>}</div>
       <div><h2><a href={`/blog/${post.slug}/`}>{post.title}</a></h2><p>{post.description}</p></div>
     </article>)}

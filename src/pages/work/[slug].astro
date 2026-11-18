@@ -23,7 +23,7 @@ const title = `${project.name} — ${concept ? "Concept" : "Project notes"}`;
     </header>
     {concept ? <>
       <section class="case-section" aria-labelledby="gallery-title"><div class="case-section-heading"><div><p class="eyebrow">Rendered pages</p><h2 id="gallery-title">A closer look</h2></div><p>Authentic screenshots of the live concept, captured at desktop and mobile sizes.</p></div>
-        <div class="case-gallery">{project.gallery.map((image) => <figure class="device-shot"><figcaption>{image.label}</figcaption><div class:list={["device-frame", image.label === "Mobile view" ? "device-mobile" : "device-desktop"]}><img src={image.src} alt={image.alt} loading="lazy" /></div></figure>)}</div>
+        <div class="case-gallery" data-motion-stagger>{project.gallery.map((image) => <figure class="device-shot" data-motion-card><figcaption>{image.label}</figcaption><div class:list={["device-frame", image.label === "Mobile view" ? "device-mobile" : "device-desktop"]}><img src={image.src} alt={image.alt} loading="lazy" /></div></figure>)}</div>
       </section>
       <section class="case-section case-two-col"><div><p class="eyebrow">Page structure</p><h2>What the concept explores</h2></div><ul class="case-list">{project.sections.map((section) => <li>{section}</li>)}</ul></section>
       <section class="case-section case-two-col"><div><p class="eyebrow">Approach</p><h2>From direction to responsive page</h2></div><ol class="case-list">{project.process.map((step) => <li>{step}</li>)}</ol></section>

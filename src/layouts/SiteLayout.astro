@@ -111,23 +111,8 @@ const socialImageUrl = new URL(socialImage, "https://saadsrabon.com").toString()
       <button class="hello-launch" type="button" aria-expanded="false" aria-controls="hello-panel"><span aria-hidden="true">✳</span><span>Say hello</span></button>
     </aside>}
     <script>
-      import { gsap } from "gsap";
-      import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-      gsap.registerPlugin(ScrollTrigger);
-      const motion = gsap.matchMedia();
-      motion.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
-          gsap.fromTo(element, { autoAlpha: 0, y: 10 }, {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.55,
-            ease: "power2.out",
-            scrollTrigger: { trigger: element, start: "top 90%", once: true },
-          });
-        });
-        return () => ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      });
+      import { initPortfolioMotion } from "../scripts/motion";
+      initPortfolioMotion();
 
       const widget = document.querySelector<HTMLElement>(".hello-widget");
       const panel = document.querySelector<HTMLElement>("#hello-panel");

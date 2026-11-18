@@ -15,7 +15,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 96px; background: var(--paper); }
+html { scroll-behavior: auto; scroll-padding-top: 96px; background: var(--paper); }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 a:hover { color: var(--accent); }
@@ -158,7 +158,9 @@ main { min-height: 60vh; }
 @media (prefers-reduced-motion:reduce) { .concept-cover img { transition:none; } }
 .arrow-link { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; text-decoration: none; }
 .arrow-link:hover { border-color: var(--accent); }
-.timeline { position: relative; margin: 12px 0 0 8px; border-left: 1px solid #d9d5cc; }
+.timeline { position: relative; margin: 12px 0 0 8px; border-left: 0; }
+.timeline::before { position: absolute; inset: 0 auto 0 0; width: 1px; background: #d9d5cc; content: ""; }
+.timeline-progress { position: absolute; z-index: 1; top: 0; bottom: 0; left: 0; width: 1px; background: var(--accent); transform: scaleY(0); transform-origin: top; pointer-events: none; }
 .timeline-item { position: relative; display: grid; grid-template-columns: 155px minmax(0, 1fr); gap: 32px; padding: 0 0 53px 32px; }
 .timeline-item:last-child { padding-bottom: 0; }
 .timeline-item::before { position: absolute; top: 8px; left: -5px; width: 9px; height: 9px; border: 1px solid var(--paper); border-radius: 50%; background: #aaa59b; content: ""; }

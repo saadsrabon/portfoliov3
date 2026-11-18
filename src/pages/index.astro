@@ -34,37 +34,37 @@ const personSchema = {
     </div>
   </div>
 
-  <section class="container section" data-reveal aria-labelledby="profile-facts">
+  <section class="container section" aria-labelledby="profile-facts">
     <div class="section-head"><div><p class="eyebrow">A quick introduction</p><h2 id="profile-facts">A little about how I work</h2></div></div>
-    <dl class="facts">
-      <div class="fact"><dt>Current role</dt><dd>Full Stack Engineer</dd></div>
-      <div class="fact"><dt>Now</dt><dd>Digital Pylot · Dhaka</dd></div>
-      <div class="fact"><dt>Open to</dt><dd>Remote roles and projects</dd></div>
-      <div class="fact"><dt>Time zone</dt><dd>GMT+6 · overlap with EU and US hours</dd></div>
-      <div class="fact"><dt>Core stack</dt><dd>NestJS, Next.js, PostgreSQL, Redis, AWS</dd></div>
-      <div class="fact"><dt>Languages</dt><dd>Bengali, English (B2), German (A1)</dd></div>
+    <dl class="facts" data-motion-stagger>
+      <div class="fact" data-motion-card><dt>Current role</dt><dd>Full Stack Engineer</dd></div>
+      <div class="fact" data-motion-card><dt>Now</dt><dd>Digital Pylot · Dhaka</dd></div>
+      <div class="fact" data-motion-card><dt>Open to</dt><dd>Remote roles and projects</dd></div>
+      <div class="fact" data-motion-card><dt>Time zone</dt><dd>GMT+6 · overlap with EU and US hours</dd></div>
+      <div class="fact" data-motion-card><dt>Core stack</dt><dd>NestJS, Next.js, PostgreSQL, Redis, AWS</dd></div>
+      <div class="fact" data-motion-card><dt>Languages</dt><dd>Bengali, English (B2), German (A1)</dd></div>
     </dl>
   </section>
 
-  <section class="container section" data-reveal aria-labelledby="recent-work">
+  <section class="container section" aria-labelledby="recent-work">
     <div class="section-head"><div><p class="eyebrow">Selected projects</p><h2 id="recent-work">Work built for real use</h2></div><a class="text-link" href="/work/">See all projects <span aria-hidden="true">→</span></a></div>
-    <div class="project-list">
-      {projects.slice(0, 4).map((project) => <article class="project">
+    <div class="project-list" data-motion-stagger>
+      {projects.slice(0, 4).map((project) => <article class="project" data-motion-card>
         <span class="project-group">{project.group}</span>
         <div class="project-copy"><h3>{project.name}</h3><p>{project.description}</p><div class="tag-list" aria-label="Technologies">{project.tags.map((tag) => <span class="tag">{tag}</span>)}</div></div>
       </article>)}
     </div>
   </section>
 
-  <section class="container section" data-reveal aria-labelledby="journey-brief">
+  <section class="container section" aria-labelledby="journey-brief">
     <div class="section-head"><div><p class="eyebrow">A different starting point</p><h2 id="journey-brief">I learned to study a system before touching it.</h2></div><a class="text-link" href="/journey/">Read my journey <span aria-hidden="true">→</span></a></div>
     <p class="hero-copy">Botany trained me to look at how small parts affect the whole. That habit still shapes how I approach product engineering: understand the system, find the important edge cases, then build with care.</p>
   </section>
 
-  <section class="container section" data-reveal aria-labelledby="writing-preview">
+  <section class="container section" aria-labelledby="writing-preview">
     <div class="section-head"><div><p class="eyebrow">Notes from the work</p><h2 id="writing-preview">Writing in progress</h2></div><a class="text-link" href="/blog/">Open the writing desk <span aria-hidden="true">→</span></a></div>
     <p class="hero-copy">I’m shaping a few practical notes on payment retries and recoverable email imports. They’re marked as drafts until they’re ready to publish.</p>
   </section>
 
-  <section class="container callout" data-reveal><h2>Have a role or product in mind? Let’s talk it through.</h2><a class="button" href="/book/">Book a 30-minute call <span aria-hidden="true">↗</span></a></section>
+  <section class="container callout"><h2>Have a role or product in mind? Let’s talk it through.</h2><a class="button" href="/book/">Book a 30-minute call <span aria-hidden="true">↗</span></a></section>
 </SiteLayout>
