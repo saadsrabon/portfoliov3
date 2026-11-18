@@ -29,8 +29,13 @@ const title = `${project.name} — ${concept ? "Concept" : "Project notes"}`;
       <section class="case-section case-two-col"><div><p class="eyebrow">Approach</p><h2>From direction to responsive page</h2></div><ol class="case-list">{project.process.map((step) => <li>{step}</li>)}</ol></section>
       <aside class="case-disclaimer"><strong>Concept disclosure</strong><p>{project.note}</p></aside>
     </> : <>
-      <section class="case-section case-two-col"><div><p class="eyebrow">Verified project note</p><h2>What the project covered</h2></div><div><p>{project.description}</p><p class="case-disclaimer"><strong>Media note</strong><br />No project screenshots are included yet, so this case study does not use substitute interface imagery. The current public site is linked above when available.</p></div></section>
-      <section class="case-section case-two-col"><div><p class="eyebrow">Technology</p><h2>Areas in the notes</h2></div><ul class="case-list">{project.tags.map((tag) => <li>{tag}</li>)}</ul></section>
+      <section class="case-story-grid" aria-label={`${project.name} case study`}>
+        <section class="case-story"><p class="eyebrow">01 / Challenge</p><h2>The problem</h2><p>{project.problem}</p></section>
+        <section class="case-story"><p class="eyebrow">02 / Engineering</p><h2>The solution</h2><p>{project.solution}</p></section>
+        <section class="case-story case-story-impact"><p class="eyebrow">03 / Outcome</p><h2>What it enables</h2><p>{project.impact}</p></section>
+      </section>
+      {project.url && <section class="case-live-panel"><div><p class="eyebrow">Explore the product</p><h2>See {project.name} in action</h2><p>Open the current public site to explore the experience.</p></div><a class="button" href={project.url} target="_blank" rel="noopener noreferrer">{project.slug === "job-engineer" ? "Visit JobOS site" : "Visit live project"} <span aria-hidden="true">↗</span></a></section>}
+      <section class="case-section case-two-col"><div><p class="eyebrow">Technology</p><h2>Tools and systems</h2></div><ul class="case-list">{project.tags.map((tag) => <li>{tag}</li>)}</ul></section>
     </>}
     <nav class="case-next" aria-label="Case study navigation"><a class="text-link" href="/work/">← Back to selected work</a>{concept && <a class="text-link" href={project.url} target="_blank" rel="noopener noreferrer">Visit live concept ↗</a>}</nav>
   </article>

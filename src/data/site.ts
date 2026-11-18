@@ -91,10 +91,67 @@ export const conceptProjects = concepts.map((project) => ({
   ],
 }));
 
+const caseNarratives = {
+  simfree: {
+    role: "Backend engineering",
+    problem: "A travel eSIM service has to make plans easy to discover while coordinating multiple providers, payment methods, and asynchronous payment callbacks.",
+    solution: "Built backend support for the destination and plan catalogue with Redis cache windows and tag invalidation. Stripe and BTCPay webhook handling uses an eight-day idempotency window to safely recognize retries.",
+    impact: "The platform supports coverage across 200+ countries and 800+ networks. Payment callbacks can be retried without repeating the same operation during the idempotency window.",
+  },
+  "leadpylot-email-service": {
+    role: "Email pipeline engineering",
+    problem: "Lead information arrives through connected mailboxes, so imports need to handle OAuth, duplicate messages, delivery and failures without losing an operator’s ability to recover.",
+    solution: "Implemented IMAP mailbox sync, Gmail OAuth, SMTP delivery, approval steps and inbound-email lead creation, with duplicate-import protection and quarantine/replay for failed imports.",
+    impact: "The workflow connects mailbox activity to CRM leads and gives operators a recovery path for imports that fail, while preventing the same message from being imported twice.",
+  },
+  visaroles: {
+    role: "Data platform engineering",
+    problem: "Job listings from multiple NHS boards need a consistent record shape before they can be searched and used across the platform.",
+    solution: "Connected six NHS job boards to a shared 39-field PostgreSQL record and used shared Zod schemas and Stripe HMAC verification in the platform’s data and payment boundaries.",
+    impact: "The job platform serves 76,000 users, with listings organized into a consistent 39-field structure from six source boards.",
+  },
+  prepcirca: {
+    role: "Real-time product engineering",
+    problem: "A live learning session becomes difficult to use when many participants join or a device’s camera or microphone drops out.",
+    solution: "Built WebRTC calling for sessions with 50+ concurrent participants and added camera and microphone recovery paths.",
+    impact: "Sessions support 50+ concurrent participants, and users have a recovery path when camera or microphone access is interrupted.",
+  },
+  "hrm-and-client-portals": {
+    role: "Full-stack product engineering",
+    problem: "HR operations and client-facing workflows needed dedicated products, supported by APIs and infrastructure that could serve users across regions.",
+    solution: "Built two products end to end, improved API and database performance, and supported multi-region hosting on AWS.",
+    impact: "The work brought HRM and client portal workflows into dedicated products backed by optimized APIs, databases and multi-region infrastructure.",
+  },
+  investbank: {
+    role: "Fintech application engineering",
+    problem: "Money-movement interfaces need consistent validation and access control across web and mobile clients and their API.",
+    solution: "Built React, Vite and Expo applications on an Express and PostgreSQL backend, using JWT authentication, role-based access and Zod validation for payment details and IBANs.",
+    impact: "The web and mobile clients share a backend with explicit role checks and validated money-movement and IBAN inputs.",
+  },
+  "job-engineer": {
+    role: "Full-stack product engineering",
+    problem: "A job-search product spans a candidate dashboard, browser workflow, resume evaluation and email tasks; those parts need to work together across web and background processing.",
+    solution: "The product is organized as a Next.js and NestJS monorepo with a dashboard, API, BullMQ worker, Chrome extension, resume scoring and email workflows, using Clerk and Prisma.",
+    impact: "Candidates can reach the platform’s dashboard, browser extension, resume scoring and email workflows as parts of one connected product. The public site presents this product as JobOS.",
+  },
+  "chilahati-archive": {
+    role: "Full-stack archive engineering",
+    problem: "A community archive needs to present Bengali writing clearly while helping visitors find material across topics and giving submissions a moderation path.",
+    solution: "Built a Next.js and Firestore archive with Bengali rich text, 14 categories, search and moderated submissions.",
+    impact: "The archive organizes content across 14 categories, supports search, and routes submissions through moderation.",
+  },
+  "shomajgori-foundation": {
+    role: "WordPress and commerce engineering",
+    problem: "The foundation’s public site combines informational pages with a WooCommerce storefront, so both the content system and shopping interfaces need to fit the organization’s site.",
+    solution: "Customized the WordPress theme and page builder, shaped WooCommerce storefront interfaces and resolved production issues.",
+    impact: "The work connects the foundation’s informational site and storefront within its WordPress experience, with production fixes supporting the live site.",
+  },
+};
+
 export const caseStudies = projects.map((project) => ({
   ...project,
   type: "Selected product work",
-  role: "Contribution details vary by project; see the verified summary below.",
+  ...caseNarratives[project.slug as keyof typeof caseNarratives],
   gallery: [],
   process: [],
 }));

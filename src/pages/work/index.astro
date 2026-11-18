@@ -4,7 +4,7 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 import { caseStudies, conceptProjects } from "../../data/site";
 ---
 <SiteLayout active="work" title="Selected work - Saad" description="Selected product engineering work and independent design concepts.">
-  <header class="container page-intro"><p class="eyebrow">Selected work</p><h1>Products, systems, and visual explorations.</h1><p>Production product work alongside independent landing-page concepts. Each page describes what is known, with no invented outcomes or client claims.</p></header>
+  <header class="container page-intro"><p class="eyebrow">Selected work</p><h1>Products, systems, and visual explorations.</h1><p>Product engineering across fintech, travel connectivity, hiring, commerce and real-time learning, alongside independent landing-page concepts.</p></header>
 
   <section class="container section" aria-labelledby="concept-heading">
     <div class="section-heading"><div><p class="eyebrow">Independent explorations</p><h2 id="concept-heading">Landing page concepts</h2></div><p>Captured directly from the live concept pages. Each project opens with desktop and mobile views.</p></div>
@@ -22,7 +22,7 @@ import { caseStudies, conceptProjects } from "../../data/site";
   </section>
 
   <section class="container section" aria-labelledby="product-heading">
-    <div class="section-heading"><div><p class="eyebrow">Selected product work</p><h2 id="product-heading">Systems in use</h2></div><p>Summaries are based on project notes. Client identities, detailed roles, and approved visual assets are not available for every project.</p></div>
+    <div class="section-heading"><div><p class="eyebrow">Selected product work</p><h2 id="product-heading">Systems in use</h2></div><p>Explore the engineering challenges, implementation choices and capabilities behind each product.</p></div>
     <div class="project-grid" data-motion-stagger>
       {caseStudies.map((project) => <article class="project project-tile" data-motion-card>
         <span class="project-group">{project.group}</span>
